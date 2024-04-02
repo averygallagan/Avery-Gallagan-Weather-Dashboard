@@ -4,14 +4,14 @@ const searchForm = document.getElementById('search-form');
 const previousSearches = document.getElementById('previous-searches');
 
 
-
+//Displays both the current weather and the 5 day forecast
 function printResults(currentData, forecastData) {
 
     const cityName = currentData.name;
     const currentTemperature = currentData.main.temp;
     const currentWindSpeed = currentData.wind.speed;
     const currentHumidity = currentData.main.humidity;
-
+//Creates the card and inputs the correct values
     const currentWeatherHtml = `
         <div class="border border-dark text-center">  
             <h2>Current Weather in ${cityName}</h2>
@@ -24,9 +24,11 @@ function printResults(currentData, forecastData) {
     CurrentResults.innerHTML = currentWeatherHtml;
 
     let forecastWeatherHtml = '';
+    //This filters each result so that it only gives the values for the next day
     const forecasts = forecastData.list.filter((item, index) => index % 8 === 0);
 
     forecasts.forEach(forecast => {
+        //converts the timestamp to a readable date
         const forecastDate = new Date(forecast.dt * 1000);
         const forecastTemperature = forecast.main.temp;
         const forecastWindSpeed = forecast.wind.speed;
@@ -44,7 +46,7 @@ function printResults(currentData, forecastData) {
         ForecastResults.innerHTML = forecastWeatherHtml;
     
 }   
-
+//fetches data using the api key and city name input
 function fetchForecast(city) {
     const api = "e034ad9e95bdcc3034f0a5bcff8dab6e";
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=${api}`;
@@ -85,7 +87,7 @@ function fetchData(city) {
        }); 
 
 }
-
+// Adds the previous searches as buttons underneath the search button
 function displayPreviousSearch() {
     let storedSearches = localStorage.getItem('searches');
     previousSearches.innerHTML = ''
@@ -108,11 +110,10 @@ function displayPreviousSearch() {
 
 function saveSearch(search) {
     let searches = JSON.parse(localStorage.getItem('searches') || '[]');
-    // const searchArr = Array.from(searches);
     searches.push(search);
     localStorage.setItem('searches', JSON.stringify(searches));
 }
-
+//Runs these functions with the search input on button submit
 searchForm.addEventListener('submit', function(event) {
     event.preventDefault();
     const searchInputVal = document.getElementById("search-input").value.trim();
@@ -124,5 +125,5 @@ searchForm.addEventListener('submit', function(event) {
         console.log("invalid city")
     }
 });
-
+//displays the previous searches from local storage on page load
 window.addEventListener('load', displayPreviousSearch)
